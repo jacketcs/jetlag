@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Distance to Berkeley Elementary Schools</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f3f3f3;
+      text-align: center;
+      margin-top: 40px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 8px;
+      font-size: 1em;
+      width: 200px;
+      margin: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #0057b8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #003f87;
+    }
+    pre {
+      text-align: left;
+      width: 90%;
+      max-width: 500px;
+      margin: 30px auto;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>Distance to Berkeley Elementary Schools</h1>
+  <p>Enter a GPS point below:</p>
+  <input id="lat" type="number" step="any" placeholder="Latitude">
+  <input id="lon" type="number" step="any" placeholder="Longitude">
+  <br>
+  <button onclick="compute()">Compute Distances</button>
+  <pre id="output"></pre>
+
+<script>
+const schools = [
+  { name: "Berkeley Arts Magnet at Whittier", lat: 37.8735, lon: -122.2727 },
+  { name: "Cragmont Elementary", lat: 37.8965, lon: -122.2779 },
+  { name: "Emerson Elementary", lat: 37.8619, lon: -122.2603 },
+  { name: "Ruth Acty Elementary", lat: 37.8761, lon: -122.2898 },
+  { name: "John Muir Elementary", lat: 37.8536, lon: -122.2516 },
+  { name: "Malcolm X Elementary", lat: 37.8556, lon: -122.2738 },
+  { name: "Oxford Elementary", lat: 37.8738, lon: -122.2777 },
+  { name: "Rosa Parks Elementary", lat: 37.8711, lon: -122.2962 },
+  { name: "Sylvia Mendez Elementary", lat: 37.8664, lon: -122.2892 },
+  { name: "Thousand Oaks Elementary", lat: 37.8933, lon: -122.2832 },
+  { name: "Washington Elementary", lat: 37.8692, lon: -122.2728 }
+];
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function compute() {
+  const lat = parseFloat(document.getElementById('lat').value);
+  const lon = parseFloat(document.getElementById('lon').value);
+  if (isNaN(lat) || isNaN(lon)) {
+    document.getElementById('output').textContent = "Please enter valid latitude and longitude.";
+    return;
+  }
+
+  const results = schools.map(s => ({
+    name: s.name,
+    distance: haversine(lat, lon, s.lat, s.lon)
+  })).sort((a, b) => a.distance - b.distance);
+
+  document.getElementById('output').textContent = results.map(r =>
+    `${r.name}: ${(r.distance * 1000).toFixed(0)} meters (${r.distance.toFixed(2)} km)`
+  ).join("\n");
+}
+</script>
+</body>
+</html>
