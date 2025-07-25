@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Closest City Parks</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f3f3f3;
+      text-align: center;
+      margin-top: 40px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    pre {
+      text-align: left;
+      width: 90%;
+      max-width: 500px;
+      margin: 30px auto;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>Closest City Parks</h1>
+  <pre id="output">Loading...</pre>
+
+<script>
+const parks = [
+  { name: "Ohlone Park", lat: 37.8701, lon: -122.2783 },
+  { name: "César Chávez Park", lat: 37.8677, lon: -122.3151 },
+  { name: "Live Oak Park", lat: 37.8836, lon: -122.2744 },
+  { name: "San Pablo Park", lat: 37.8627, lon: -122.2873 },
+  { name: "Grove Park", lat: 37.8587, lon: -122.2743 },
+  { name: "Codornices Park", lat: 37.8892, lon: -122.2703 },
+  { name: "Willard Park", lat: 37.8653, lon: -122.2569 }
+];
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function getCoords() {
+  const params = new URLSearchParams(window.location.search);
+  const lat = parseFloat(params.get('lat'));
+  const lon = parseFloat(params.get('lon'));
+  return { lat, lon };
+}
+
+function compute() {
+  const { lat, lon } = getCoords();
+  if (isNaN(lat) || isNaN(lon)) {
+    document.getElementById('output').textContent = "Invalid or missing coordinates.";
+    return;
+  }
+
+  const results = parks.map(s => ({
+    name: s.name,
+    distance: haversine(lat, lon, s.lat, s.lon)
+  })).sort((a, b) => a.distance - b.distance);
+
+  document.getElementById('output').textContent = results.map(r =>
+    `${r.name}: ${(r.distance * 1000).toFixed(0)} meters (${r.distance.toFixed(2)} km)`
+  ).join("\n");
+}
+
+compute();
+</script>
+</body>
+</html>

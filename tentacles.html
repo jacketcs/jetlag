@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Tentacles - Jet Lag: Berkeley</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f3f3f3;
+      text-align: center;
+      margin-top: 40px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 8px;
+      font-size: 1em;
+      width: 200px;
+      margin: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #0057b8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #003f87;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tentacles Distance Tools</h1>
+  <p>Enter your location:</p>
+  <input id="lat" type="number" step="any" placeholder="Latitude">
+  <input id="lon" type="number" step="any" placeholder="Longitude">
+  <div>
+    <button onclick="goTo('schools_static.html')">Elementary Schools</button>
+    <button onclick="goTo('libraries.html')">Library Branches</button>
+    <button onclick="goTo('parks.html')">City Parks</button>
+  </div>
+
+  <script>
+    function goTo(page) {
+      const lat = document.getElementById('lat').value;
+      const lon = document.getElementById('lon').value;
+      if (!lat || !lon) {
+        alert("Please enter latitude and longitude.");
+        return;
+      }
+      const url = `${page}?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+      window.location.href = url;
+    }
+  </script>
+</body>
+</html>
